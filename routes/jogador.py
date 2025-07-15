@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from config.database import conexao
 from models.jogador import Jogador
 from schemas.jogador import jogadorEntidade, listaJogadoresEntidade
+from bson import ObjectId
 
 jogador_router = APIRouter()
 
@@ -13,6 +14,16 @@ async def inicio():
 @jogador_router.get('/jogadores')
 async def lista_jogadores():
     return listaJogadoresEntidade(conexao.local.jogador.find())
+
+#Detalhes de um jogador
+@jogador_router.get('/jogadores/{jogador_id}')
+def buscar_jogador_id(jogador_id):
+    return jogadorEntidade(
+        conexao.local.jogador.find_one
+        (
+            {"_id": ObjectId(jogador_id)}
+        )
+    )
 
 #insere novos jogadores
 @jogador_router.post('/jogadores')
